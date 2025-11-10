@@ -1,0 +1,2 @@
+
+include $(CONTIKI)/arch/cpu/arm/cortex-m/cm4/Makefile.cm4

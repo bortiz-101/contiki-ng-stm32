@@ -1,0 +1,3 @@
+CONTIKI_CPU=$(CONTIKI)/arch/cpu/stm32f4xx
+
+include $(CONTIKI_CPU)/Makefile.stm32f4xx
