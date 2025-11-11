@@ -1,2 +1,10 @@
+#### CPU-dependent source files 
+CONTIKI_CPU_SOURCEFILES += soc.c clock.c rtimer-arch.c uart.c watchdog.c 
 
-include $(CONTIKI)/arch/cpu/arm/cortex-m/cm4/Makefile.cm4
+#### This is what will actually instruct the system to build all of the above
+CONTIKI_SOURCEFILES += $(CONTIKI_CPU_SOURCEFILES)
+
+# F4 MCU Headers
+CFLAGS += -I$(CONTIKI_NG_ARCH_CPU_DIR)/stm32f4xx
+
+include $(CONTIKI_NG_CM4_DIR)/Makefile.cm4
