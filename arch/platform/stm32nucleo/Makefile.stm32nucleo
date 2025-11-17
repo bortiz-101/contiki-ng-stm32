@@ -1,0 +1,24 @@
+ifndef CONTIKI
+	$(error CONTIKI not defined! You must specifiy where CONTIKI resides!)
+endif
+
+# Board Selection
+
+BOARD ?= f446re
+PLATFORM_ROOT_DIR = $(CONTIKI_NG_RELOC_PLATFORM_DIR)/$(TARGET)
+
+# Board specific sources and flags
+
+include $(PLATFORM_ROOT_DIR)/$(BOARD)/Makefile.$(TARGET)-$(notdir $(TARGET))
+
+# Platform sources common across stm32nucleo boards
+CONTIKI_TARGET_DIRS += .
+CONTIKI_TARGET_SOURCEFILES += platform.c $(BOARD_SOURCEFILES)
+CONTIKI_SOURCEFILES += $(CONTIKI_TARGET_SOURCEFILES)
+
+# Hook in the CPU family
+CONTIKI_CPU   = $(CONTIKI_NG_RELOC_CPU_DIR)/stm32f4xx
+CPU_FAMILY    ?= stm32f4xx    
+CPU_MODEL     ?= f446re      
+
+include $(CONTIKI_CPU)/Makefile.$(CPU_FAMILY)
