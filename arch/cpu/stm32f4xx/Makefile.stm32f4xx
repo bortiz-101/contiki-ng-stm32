@@ -4,7 +4,8 @@ CPU_MODEL ?= f446e
 CONTIKI_CPU_SOURCEFILES += soc.c clock.c rtimer-arch.c uart.c watchdog.c 
 
 #### This is what will actually instruct the system to build all of the above
-CONTIKI_SOURCEFILES += $(CONTIKI_CPU_SOURCEFILES)
+CONTIKI_SOURCEFILES += $(CONTIKI_CPU_SOURCEFILES) $(DEBUG_IO_SOURCEFILES)
+CONTIKI_SOURCEFILES += $(USB_SOURCEFILES)
 
 # F4 MCU Headers
 CFLAGS += -I$(CONTIKI_NG_ARCH_CPU_DIR)/stm32f4xx

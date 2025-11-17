@@ -1,0 +1,2 @@
+#define CLOCK_CONF_SIZE 4
+#define CLOCK_CONF_SECOND 128

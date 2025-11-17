@@ -2,7 +2,8 @@
 
 # Linker script and startup for this exact MCU
 LDSCRIPT ?= $(CONTIKI_NG_RELOC_CPU_DIR)/stm32f4xx/f446re/stm32f446re.ld
-CONTIKI_SOURCEFILES += f446re/startup_stm32f446re.c
+CONTIKI_SOURCEFILES += f446re/startup_stm32f446re.c f446re/startup_stm32f446re.s
+
 
 # Model-specific CFLAGS (define the exact chip, enable HAL if you use it, etc.)
 CFLAGS += -DSTM32F446xx
