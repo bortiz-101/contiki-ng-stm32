@@ -15,7 +15,7 @@
 #include BOARD_CONF_PATH
 #else /* BOARD_CONF_PATH */
 #error "BOARD_CONF_PATH undefined"
-#endif /* BOARD_CONF_PATH */ *
+#endif /* BOARD_CONF_PATH */
 /*/
 /*---------------------------------------------------------------------------*/
 /* Include CPU-related configuration */
