@@ -3,13 +3,14 @@ ifndef CONTIKI
 endif
 
 # Board Selection
+BOARDS = f446re
 
 BOARD ?= f446re
 PLATFORM_ROOT_DIR = $(CONTIKI_NG_RELOC_PLATFORM_DIR)/$(TARGET)
 
 # Board specific sources and flags
 
-include $(PLATFORM_ROOT_DIR)/$(BOARD)/Makefile.$(TARGET)-$(notdir $(TARGET))
+include $(PLATFORM_ROOT_DIR)/$(BOARD)/Makefile.$(TARGET)-$(BOARD)
 
 # Platform sources common across stm32nucleo boards
 CONTIKI_TARGET_DIRS += .
