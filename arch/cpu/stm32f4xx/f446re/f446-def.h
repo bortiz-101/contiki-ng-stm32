@@ -40,7 +40,7 @@
  *  These are immutable values determined by the hardware and should not be
  *  modified by the user.
  * 
- * Registry Map can be found in RM0390 Reference Manual:
+ * Register Map can be found in RM0390 Reference Manual:
  * STM32F446xx advanced ARM®-based 32-bit MCUs
  * https://www.st.com/resource/en/reference_manual/rm0390-stm32f446xx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf
  */

@@ -42,6 +42,7 @@
 
 #include <stdint.h>
 
+
 /* System core clock variable required by ARM CMSIS */
 uint32_t SystemCoreClock = HSE_VALUE;
 
@@ -57,7 +58,7 @@ const uint8_t APBPrescTable[8] = {0, 0, 0, 0, 1, 2, 3, 4};
  *
  * Configures:
  * - HSE (8 MHz external oscillator on STM32 Nucleo board)
- * - PLL parameters: PLLM=2, PLLN=180, PLLP=2 → 180 MHz
+ * - PLL parameters: PLLM=2, PLLN=180, PLLP=4 → 180 MHz
  * - Bus prescalers: AHB=1, APB1=4, APB2=2 → 180/45/90 MHz
  * - Updates SystemCoreClock variable
  *
@@ -67,30 +68,27 @@ const uint8_t APBPrescTable[8] = {0, 0, 0, 0, 1, 2, 3, 4};
 void
 SystemInit(void)
 {
-  /* TODO: Implement clock tree configuration
-   * 
-   * Step 1: Enable HSE oscillator
-   *   - Set RCC->CR |= RCC_CR_HSEON
-   *   - Wait for RCC->CR & RCC_CR_HSERDY
-   * 
-   * Step 2: Configure PLL
-   *   - Set RCC->PLLCFGR with PLLM, PLLN, PLLP values
-   *   - Enable PLL: RCC->CR |= RCC_CR_PLLON
-   *   - Wait for RCC->CR & RCC_CR_PLLRDY
-   * 
-   * Step 3: Set system clock source to PLL
-   *   - RCC->CFGR |= RCC_CFGR_SW_PLL
-   *   - Wait for (RCC->CFGR & RCC_CFGR_SWS) == RCC_CFGR_SWS_PLL
-   * 
-   * Step 4: Configure bus prescalers
-   *   - RCC->CFGR |= (AHB_PRESCALER | APB1_PRESCALER | APB2_PRESCALER)
-   * 
-   * Step 5: Update SystemCoreClock variable
-   *   - SystemCoreClock = 180000000UL;
-   */
 
-  /* Placeholder: system clock remains at HSE for now */
-  SystemCoreClock = HSE_VALUE;
+  RCC->CR |= RCC_CR_HSEON;
+    while(!(RCC->CR & RCC_CR_HSERDY));
+
+    /* Set PLL parameters: PLLM=2, PLLN=180, PLLP=4 */
+    RCC->PLLCFGR = RCC_PLLCFGR_PLLM(2) | 
+            RCC_PLLCFGR_PLLN(180) | 
+            RCC_PLLCFGR_PLLP_4;
+    RCC->CR |= RCC_CR_PLLON;
+    
+    while(!(RCC->CR & RCC_CR_PLLRDY));
+
+    RCC->CFGR |= RCC_CFGR_SW_PLL;
+    
+    while((RCC->CFGR & RCC_CFGR_SWS_MASK) != RCC_CFGR_SWS_PLL);
+
+    /* Configure bus prescalers: AHB=1, APB1=4, APB2=2 */
+    RCC->CFGR |= (RCC_CFGR_HPRE_DIV1 | RCC_CFGR_PPRE1_DIV4 | RCC_CFGR_PPRE2_DIV2);
+
+
+  SystemCoreClock = 180000000UL;
 }
 
 /*---------------------------------------------------------------------------*/
