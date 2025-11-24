@@ -23,20 +23,23 @@
 #define RTIMER_ARCH_H_
 
 #include <stdint.h>
+#include "contiki.h"
 
 /**
  * \brief Real-time timer tick frequency
  * 
  * This should match the actual hardware timer frequency used for rtimer.
- * Currently set to 1000 Hz (1ms resolution) as a placeholder.
- * This will be updated when rtimer-arch.c is implemented.
+ * Currently set to CLOCK_CONF_SECOND as a baseline.
  */
-#define RTIMER_ARCH_SECOND 1000
+#define RTIMER_ARCH_SECOND CLOCK_CONF_SECOND
 
-/* Architecture-specific rtimer type - can be overridden for custom implementations */
-#ifndef RTIMER_ARCH_SECOND
-#define RTIMER_ARCH_SECOND 1000
-#endif
+/**
+ * \brief Get the current rtimer clock value
+ * 
+ * For now, we use clock_time() as the source. This will be replaced
+ * with a hardware timer reading once rtimer-arch.c is fully implemented.
+ */
+#define rtimer_arch_now() (rtimer_clock_t)clock_time()
 
 #endif /* RTIMER_ARCH_H_ */
 
