@@ -1,0 +1,15 @@
+# Device-specific configuration for STM32F446RE
+
+### Linker script - use CONTIKI_CPU (already expanded by platform Makefile)
+LDSCRIPT ?= $(CONTIKI_CPU)/stm32f446re.ld
+
+### Startup code (assembly) - using simple filename, build system finds it via vpath
+CONTIKI_CPU_SOURCEFILES += startup_stm32f446xx.s
+
+### MCU-specific compiler flags
+CFLAGS += -DSTM32F446xx
+
+# TODO: Add per-MCU include paths when needed
+# CFLAGS += -I$(CONTIKI_CPU)/f446re
+
+
