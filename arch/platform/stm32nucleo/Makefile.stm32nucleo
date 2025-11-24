@@ -9,8 +9,7 @@ BOARD ?= f446re
 PLATFORM_ROOT_DIR = $(CONTIKI_NG_RELOC_PLATFORM_DIR)/$(TARGET)
 
 # Board specific sources and flags
-
-include $(PLATFORM_ROOT_DIR)/$(BOARD)/Makefile.$(TARGET)-$(BOARD)
+-include $(PLATFORM_ROOT_DIR)/$(BOARD)/Makefile.$(BOARD)
 
 # Platform sources common across stm32nucleo boards
 CONTIKI_TARGET_DIRS += .
@@ -21,5 +20,10 @@ CONTIKI_SOURCEFILES += $(CONTIKI_TARGET_SOURCEFILES)
 CONTIKI_CPU   = $(CONTIKI_NG_RELOC_CPU_DIR)/stm32f4xx
 CPU_FAMILY    ?= stm32f4xx    
 CPU_MODEL     ?= f446re      
+
+# Set up CPU include paths early so contiki-conf.h can find CPU definitions
+CFLAGS += -I$(CONTIKI_NG_RELOC_CPU_DIR)/stm32f4xx
+CFLAGS += -I$(CONTIKI_NG_ARCH_CPU_DIR)/stm32f4xx
+CFLAGS += -I$(CONTIKI_NG_RELOC_CPU_DIR)/stm32f4xx/$(CPU_MODEL)
 
 include $(CONTIKI_CPU)/Makefile.$(CPU_FAMILY)
