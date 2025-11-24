@@ -37,7 +37,6 @@
  * Called early from startup assembly (startup_stm32f446xx.s) before main().
  * Peripheral-specific clocks are enabled by individual drivers.
  */
-#include "stm32f4xx.h"
 #include "system_stm32f4xx.h"
 
 #include <stdint.h>
