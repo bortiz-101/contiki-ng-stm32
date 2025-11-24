@@ -1,0 +1,9 @@
+CFLAGS +=
+
+BOARD_SOURCEFILES +=
+
+# Define board configuration paths for platform/contiki-conf.h
+CFLAGS += -DBOARD_CONF_PATH=\"stm32nucleo-f446re-conf.h\"
+CFLAGS += -DBOARD_DEF_PATH=\"stm32nucleo-f446re-def.h\"
+
+CONTIKI_TARGET_DIRS += f446re
