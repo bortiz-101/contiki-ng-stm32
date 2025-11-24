@@ -1,8 +1,10 @@
 
-CPU_MODEL ?= f446e
-#### CPU-dependent source files 
-CONTIKI_CPU_SOURCEFILES += $(CONTIKI_NG_RELOC_CPU_DIR)/stm32f4xx/soc.c
-CONTIKI_CPU_SOURCEFILES += $(CONTIKI_NG_RELOC_CPU_DIR)/stm32f4xx/system_stm32f4xx.c 
+CPU_MODEL ?= f446re
+
+#### CPU-dependent source files - just filenames, build system finds them in CONTIKI_CPU_DIRS
+CONTIKI_CPU_SOURCEFILES += soc.c
+CONTIKI_CPU_SOURCEFILES += system_stm32f4xx.c 
+CONTIKI_CPU_SOURCEFILES += startup_stm32f446re.c
 
 #### This is what will actually instruct the system to build all of the above
 CONTIKI_SOURCEFILES += $(CONTIKI_CPU_SOURCEFILES) $(DEBUG_IO_SOURCEFILES)
@@ -12,5 +14,8 @@ CONTIKI_SOURCEFILES += $(USB_SOURCEFILES)
 CFLAGS += -I$(CONTIKI_NG_ARCH_CPU_DIR)/stm32f4xx
 CFLAGS += -I$(CONTIKI_NG_RELOC_CPU_DIR)/stm32f4xx/$(CPU_MODEL)
 
-include $(CONTIKI_NG_RELOC_CPU_DIR)/stm32f4xx/f446re/Makefile.f446
+# Device-specific configuration - use absolute path so make can find the linker script
+LDSCRIPT ?= $(CONTIKI_NG_RELOC_CPU_DIR)/stm32f4xx/$(CPU_MODEL)/stm32f446re.ld
+CFLAGS += -DSTM32F446xx
+
 include $(CONTIKI)/$(CONTIKI_NG_CM4_DIR)/Makefile.cm4
