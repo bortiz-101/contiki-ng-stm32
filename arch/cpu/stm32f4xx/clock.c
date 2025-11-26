@@ -31,16 +31,19 @@ clock_init(void)
   
   /* 
    * Calculate reload value for desired tick rate
-   * For STM32F4XX at 168 MHz system clock and CLOCK_CONF_SECOND = 128:
-   * Reload = (168,000,000 Hz / 128) - 1 = 1,312,500 - 1
+   * Formula: reload = (SystemCoreClock / CLOCK_SECOND) - 1
    * 
-   * Generic formula: reload = (SYS_CLK_HZ / CLOCK_SECOND) - 1
-   * For now, use a conservative estimate assuming ~168MHz
+   * Example for STM32F446RE (180 MHz) with CLOCK_CONF_SECOND = 128:
+   * Reload = (180,000,000 Hz / 128) - 1 = 1,406,249
+   * 
+   * NOTE: SystemCoreClock is set by SystemInit() in system_stm32f4xx.c
+   * If dynamic frequency scaling is implemented in the future,
+   * SystemCoreClockUpdate() must be called to recalculate this value.
    */
   
   /* Set reload value (24-bit) */
-  /* Assuming 168 MHz clock, for 128 Hz: 168000000 / 128 = 1312500 */
-  SYSTICK->LOAD = (168000000 / CLOCK_SECOND) - 1;
+  /* Use SystemCoreClock from system_stm32f4xx.c (set by SystemInit()) */
+  SYSTICK->LOAD = (SystemCoreClock / CLOCK_SECOND) - 1;
   
   /* Clear current value */
   SYSTICK->VAL = 0;
