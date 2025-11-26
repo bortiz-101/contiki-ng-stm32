@@ -51,7 +51,7 @@ clock_init(void)
    * - Enable interrupt on tick (TICKINT = 1)
    * - Enable counter (ENABLE = 1)
    */
-  SYSTICK->CTRL = SYSTICK_CTRL_CLKSOURCE | SYSTICK_CTRL_TICKINT | SYSTICK_CTRL_ENABLE;
+  SYSTICK->CTRL = SYSTICK_CTRL_INIT_VALUE;
 }
 
 /*---------------------------------------------------------------------------*/
