@@ -130,6 +130,9 @@ typedef struct {
 #define SYSTICK_CTRL_CLKSOURCE  (1U << 2)   /**< Clock source selection (CLKSOURCE) */
 #define SYSTICK_CTRL_COUNTFLAG  (1U << 16)  /**< Count flag (COUNTFLAG, read-only) */
 
+/** Convenience macro: SysTick configuration for 128 Hz with interrupts */
+#define SYSTICK_CTRL_INIT_VALUE (SYSTICK_CTRL_ENABLE | SYSTICK_CTRL_TICKINT | SYSTICK_CTRL_CLKSOURCE)
+
 /** @} */
 /*---------------------------------------------------------------------------*/
 /** \name GPIO (General Purpose I/O) Register Structure
