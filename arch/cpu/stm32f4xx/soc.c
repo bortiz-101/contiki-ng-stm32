@@ -59,8 +59,8 @@ soc_init(void)
   /* TODO: GPIO peripheral initialization will go here when available */
   /* gpio_init(); */
 
-  /* TODO: Timer initialization will go here when clock.c is implemented */
-  /* rtimer_init(); */
+  /* Initialize rtimer for high-precision scheduling */
+  rtimer_arch_init();
 
   /* TODO: UART initialization will go here when uart.c is implemented */
   /* uart_init(); */
