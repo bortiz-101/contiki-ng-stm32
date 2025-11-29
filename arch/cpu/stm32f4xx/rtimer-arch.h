@@ -22,24 +22,38 @@
 #ifndef RTIMER_ARCH_H_
 #define RTIMER_ARCH_H_
 
-#include <stdint.h>
 #include "contiki.h"
+#include "sys/rtimer.h"
+#include <stdint.h>
+
+/**
+ * \brief Real-time timer clock size (in bytes)
+ * 
+ * STM32F4 TIM2 is a 32-bit counter, so we use 32-bit rtimer ticks
+ */
+#define RTIMER_CONF_CLOCK_SIZE 4
 
 /**
  * \brief Real-time timer tick frequency
  * 
  * This should match the actual hardware timer frequency used for rtimer.
- * Currently set to CLOCK_CONF_SECOND as a baseline.
+ * Uses the same frequency as the main Contiki-NG clock.
  */
-#define RTIMER_ARCH_SECOND CLOCK_CONF_SECOND
+#define RTIMER_ARCH_SECOND CLOCK_SECOND
 
 /**
  * \brief Get the current rtimer clock value
  * 
- * For now, we use clock_time() as the source. This will be replaced
- * with a hardware timer reading once rtimer-arch.c is fully implemented.
+ * Defined in rtimer-arch.c - reads the free-running TIM2 counter
  */
-#define rtimer_arch_now() (rtimer_clock_t)clock_time()
+rtimer_clock_t rtimer_arch_now(void);
+
+/**
+ * \brief Return the next scheduled rtimer trigger time
+ * 
+ * Used by power management to determine wake-up time
+ */
+rtimer_clock_t rtimer_arch_next_trigger(void);
 
 #endif /* RTIMER_ARCH_H_ */
 
