@@ -60,6 +60,9 @@ platform_init_stage_one(void)
   /* Initialize SoC: clock tree, interrupts, basic peripherals */
   soc_init();
 
+  /* Initialize debug output */
+  dbg_init();
+
   /* TODO: Platform-specific LED initialization will go here */
   /* leds_init(); */
 
@@ -84,6 +87,22 @@ platform_init_stage_two(void)
    * - radio initialization
    * - sensor drivers
    */
+}
+
+/*---------------------------------------------------------------------------*/
+/**
+ * \brief Final platform initialization (stage three)
+ *
+ * Called by main() after network stack initialization.
+ * Performs application-specific setup:
+ * - Sensor calibration
+ * - Application-specific timers
+ * - Other deferred setup
+ */
+void
+platform_init_stage_three(void)
+{
+  /* TODO: Application-specific deferred initialization */
 }
 
 /*---------------------------------------------------------------------------*/
