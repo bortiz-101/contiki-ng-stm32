@@ -380,6 +380,59 @@ typedef struct {
 
 /** @} */
 /*---------------------------------------------------------------------------*/
+/** \name Independent Watchdog (IWDG) Register Structure
+ * @{
+ */
+
+/** \brief IWDG register layout */
+typedef struct {
+  volatile uint32_t KR;   /**< Key Register (offset 0x00) */
+  volatile uint32_t PR;   /**< Prescaler Register (offset 0x04) */
+  volatile uint32_t RLR;  /**< Reload Register (offset 0x08) */
+  volatile uint32_t SR;   /**< Status Register (offset 0x0C) */
+} iwdg_registers_t;
+
+/** \brief IWDG peripheral base address */
+#define IWDG_BASE 0x40003000UL
+
+/** \brief IWDG peripheral pointer at fixed memory address */
+#define IWDG ((iwdg_registers_t *)IWDG_BASE)
+
+/** @} */
+/*---------------------------------------------------------------------------*/
+/** \name IWDG Key Register (KR) Bit Definitions
+ * @{
+ */
+
+#define IWDG_KR_KEY_ENABLE  0x5555U   /**< Enable access to PR and RLR */
+#define IWDG_KR_KEY_RELOAD  0xAAAAU  /**< Reload the counter */
+#define IWDG_KR_KEY_START   0xCCCCU   /**< Start the IWDG */
+
+/** @} */
+/*---------------------------------------------------------------------------*/
+/** \name IWDG Prescaler Register (PR) Bit Definitions
+ * @{
+ */
+
+#define IWDG_PR_DIV4        0U   /**< Prescaler = 4 */
+#define IWDG_PR_DIV8        1U   /**< Prescaler = 8 */
+#define IWDG_PR_DIV16       2U   /**< Prescaler = 16 */
+#define IWDG_PR_DIV32       3U   /**< Prescaler = 32 */
+#define IWDG_PR_DIV64       4U   /**< Prescaler = 64 */
+#define IWDG_PR_DIV128      5U   /**< Prescaler = 128 */
+#define IWDG_PR_DIV256      6U   /**< Prescaler = 256 */
+
+/** @} */
+/*---------------------------------------------------------------------------*/
+/** \name IWDG Status Register (SR) Bit Definitions
+ * @{
+ */
+
+#define IWDG_SR_PVU         0x01U  /**< Prescaler Value Update busy */
+#define IWDG_SR_RVU         0x02U  /**< Reload Value Update busy */
+
+/** @} */
+/*---------------------------------------------------------------------------*/
 
 // Sets up the FPU, vector relocation, and other system functions
 void SystemInit(void);
