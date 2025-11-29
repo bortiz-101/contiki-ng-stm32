@@ -91,6 +91,20 @@ platform_init_stage_two(void)
 
 /*---------------------------------------------------------------------------*/
 /**
+ * \brief CPU idle function
+ *
+ * Called by the scheduler when there is no active work.
+ * Puts the CPU into a low-power sleep state until the next interrupt.
+ */
+void
+platform_idle(void)
+{
+  /* Wait for interrupt (WFI instruction) */
+  __asm volatile("wfi");
+}
+
+/*---------------------------------------------------------------------------*/
+/**
  * \brief Final platform initialization (stage three)
  *
  * Called by main() after network stack initialization.
