@@ -64,6 +64,13 @@
  */
 void soc_init(void);
 
+/** \brief Initialize debug output via USART2
+ *
+ * Configures USART2 for serial debug output at 115200 baud.
+ * PA2 (TX), PA3 (RX)
+ */
+void dbg_init(void);
+
 /** @} */
 
 #endif /* SOC_H_ */
