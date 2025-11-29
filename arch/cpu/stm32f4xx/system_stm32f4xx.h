@@ -285,6 +285,101 @@ typedef struct {
 
 /** @} */
 /*---------------------------------------------------------------------------*/
+/** \name General Purpose Timer (TIM2-TIM5) Register Structure
+ * @{
+ */
+
+/** \brief General Purpose Timer register layout */
+typedef struct {
+  volatile uint32_t CR1;      /**< Control register 1 (offset 0x00) */
+  volatile uint32_t CR2;      /**< Control register 2 (offset 0x04) */
+  volatile uint32_t SMCR;     /**< Slave mode control register (offset 0x08) */
+  volatile uint32_t DIER;     /**< DMA/interrupt enable register (offset 0x0C) */
+  volatile uint32_t SR;       /**< Status register (offset 0x10) */
+  volatile uint32_t EGR;      /**< Event generation register (offset 0x14) */
+  volatile uint32_t CCMR1;    /**< Capture/compare mode register 1 (offset 0x18) */
+  volatile uint32_t CCMR2;    /**< Capture/compare mode register 2 (offset 0x1C) */
+  volatile uint32_t CCER;     /**< Capture/compare enable register (offset 0x20) */
+  volatile uint32_t CNT;      /**< Counter register (offset 0x24) */
+  volatile uint32_t PSC;      /**< Prescaler register (offset 0x28) */
+  volatile uint32_t ARR;      /**< Auto-reload register (offset 0x2C) */
+  volatile uint32_t _reserved1;
+  volatile uint32_t CCR1;     /**< Capture/compare register 1 (offset 0x34) */
+  volatile uint32_t CCR2;     /**< Capture/compare register 2 (offset 0x38) */
+  volatile uint32_t CCR3;     /**< Capture/compare register 3 (offset 0x3C) */
+  volatile uint32_t CCR4;     /**< Capture/compare register 4 (offset 0x40) */
+} tim_registers_t;
+
+/** \brief General Purpose Timer peripheral pointers at fixed memory addresses */
+#define TIM2  ((tim_registers_t *)0x40000000UL)
+#define TIM3  ((tim_registers_t *)0x40000400UL)
+#define TIM4  ((tim_registers_t *)0x40000800UL)
+#define TIM5  ((tim_registers_t *)0x40000C00UL)
+
+/** \brief Advanced Control Timer peripheral pointers */
+#define TIM1  ((tim_registers_t *)0x40010000UL)
+#define TIM8  ((tim_registers_t *)0x40010400UL)
+
+/** @} */
+/*---------------------------------------------------------------------------*/
+/** \name General Purpose Timer (TIM) CR1 (Control Register 1) Bit Definitions
+ * @{
+ */
+
+#define TIM_CR1_CEN     (1U << 0)   /**< Counter enable */
+#define TIM_CR1_UDIS    (1U << 1)   /**< Update disable */
+#define TIM_CR1_URS     (1U << 2)   /**< Update request source */
+#define TIM_CR1_OPM     (1U << 3)   /**< One pulse mode */
+#define TIM_CR1_DIR     (1U << 4)   /**< Direction */
+#define TIM_CR1_CMS     (3U << 5)   /**< Center-aligned mode selection */
+#define TIM_CR1_ARPE    (1U << 7)   /**< Auto-reload preload enable */
+#define TIM_CR1_CKD     (3U << 8)   /**< Clock division */
+
+/** @} */
+/*---------------------------------------------------------------------------*/
+/** \name General Purpose Timer (TIM) DIER (DMA/Interrupt Enable) Bit Definitions
+ * @{
+ */
+
+#define TIM_DIER_UIE    (1U << 0)   /**< Update interrupt enable */
+#define TIM_DIER_CC1IE  (1U << 1)   /**< Capture/Compare 1 interrupt enable */
+#define TIM_DIER_CC2IE  (1U << 2)   /**< Capture/Compare 2 interrupt enable */
+#define TIM_DIER_CC3IE  (1U << 3)   /**< Capture/Compare 3 interrupt enable */
+#define TIM_DIER_CC4IE  (1U << 4)   /**< Capture/Compare 4 interrupt enable */
+
+/** @} */
+/*---------------------------------------------------------------------------*/
+/** \name General Purpose Timer (TIM) SR (Status Register) Bit Definitions
+ * @{
+ */
+
+#define TIM_SR_UIF      (1U << 0)   /**< Update interrupt flag */
+#define TIM_SR_CC1IF    (1U << 1)   /**< Capture/Compare 1 interrupt flag */
+#define TIM_SR_CC2IF    (1U << 2)   /**< Capture/Compare 2 interrupt flag */
+#define TIM_SR_CC3IF    (1U << 3)   /**< Capture/Compare 3 interrupt flag */
+#define TIM_SR_CC4IF    (1U << 4)   /**< Capture/Compare 4 interrupt flag */
+
+/** @} */
+/*---------------------------------------------------------------------------*/
+/** \name RCC Clock Enable Bits (continued)
+ * @{
+ */
+
+/** \brief RCC_APB1ENR - APB1 Peripheral Clock Enable Register Bits (Timer section) */
+#define RCC_APB1ENR_TIM2EN  (1U << 0)   /**< TIM2 clock enable */
+#define RCC_APB1ENR_TIM3EN  (1U << 1)   /**< TIM3 clock enable */
+#define RCC_APB1ENR_TIM4EN  (1U << 2)   /**< TIM4 clock enable */
+#define RCC_APB1ENR_TIM5EN  (1U << 3)   /**< TIM5 clock enable */
+
+/** \brief RCC_APB2ENR - APB2 Peripheral Clock Enable Register Bits (Timer section) */
+#define RCC_APB2ENR_TIM1EN  (1U << 0)   /**< TIM1 clock enable */
+#define RCC_APB2ENR_TIM8EN  (1U << 1)   /**< TIM8 clock enable */
+#define RCC_APB2ENR_TIM9EN  (1U << 16)  /**< TIM9 clock enable */
+#define RCC_APB2ENR_TIM10EN (1U << 17)  /**< TIM10 clock enable */
+#define RCC_APB2ENR_TIM11EN (1U << 18)  /**< TIM11 clock enable */
+
+/** @} */
+/*---------------------------------------------------------------------------*/
 
 // Sets up the FPU, vector relocation, and other system functions
 void SystemInit(void);
