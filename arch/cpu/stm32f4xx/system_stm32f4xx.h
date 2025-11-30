@@ -433,6 +433,90 @@ typedef struct {
 
 /** @} */
 /*---------------------------------------------------------------------------*/
+/** \name DWT (Data Watchpoint and Trace) Register Structure
+ * @{
+ */
+
+/** \brief DWT register layout (ARM Cortex-M4) */
+typedef struct {
+  uint32_t CTRL;       /**< Control Register (offset 0x00) */
+  uint32_t CYCCNT;     /**< Cycle Count Register (offset 0x04) */
+  uint32_t CPICNT;     /**< CPI Count Register (offset 0x08) */
+  uint32_t EXCCNT;     /**< Exception Overhead Count Register (offset 0x0C) */
+  uint32_t SLEEPCNT;   /**< Sleep Count Register (offset 0x10) */
+  uint32_t LSUCNT;     /**< LSU Count Register (offset 0x14) */
+  uint32_t FOLDCNT;    /**< Folded-instruction Count Register (offset 0x18) */
+  uint32_t PCSR;       /**< Program Counter Sample Register (offset 0x1C) */
+  uint32_t COMP0;      /**< Comparator Register 0 (offset 0x20) */
+  uint32_t MASK0;      /**< Mask Register 0 (offset 0x24) */
+  uint32_t FUNCTION0;  /**< Function Register 0 (offset 0x28) */
+  uint32_t RESERVED0;  /**< Reserved (offset 0x2C) */
+  uint32_t COMP1;      /**< Comparator Register 1 (offset 0x30) */
+  uint32_t MASK1;      /**< Mask Register 1 (offset 0x34) */
+  uint32_t FUNCTION1;  /**< Function Register 1 (offset 0x38) */
+  uint32_t RESERVED1;  /**< Reserved (offset 0x3C) */
+  uint32_t COMP2;      /**< Comparator Register 2 (offset 0x40) */
+  uint32_t MASK2;      /**< Mask Register 2 (offset 0x44) */
+  uint32_t FUNCTION2;  /**< Function Register 2 (offset 0x48) */
+  uint32_t RESERVED2;  /**< Reserved (offset 0x4C) */
+  uint32_t COMP3;      /**< Comparator Register 3 (offset 0x50) */
+  uint32_t MASK3;      /**< Mask Register 3 (offset 0x54) */
+  uint32_t FUNCTION3;  /**< Function Register 3 (offset 0x58) */
+} dwt_registers_t;
+
+/** \brief DWT peripheral pointer at fixed memory address */
+#define DWT ((dwt_registers_t *)0xE0001000UL)
+
+/** @} */
+/*---------------------------------------------------------------------------*/
+/** \name DWT CTRL (Control) Register Bit Definitions
+ * @{
+ */
+
+#define DWT_CTRL_CYCCNTENA  (1U << 0)   /**< Enable Cycle Counter (CYCCNTENA) */
+#define DWT_CTRL_POSTPRESET (0xFU << 1) /**< Post-preset (bits 4:1) */
+#define DWT_CTRL_POSTINIT   (0xFU << 5) /**< Post-init (bits 9:5) */
+#define DWT_CTRL_CYCTAP     (1U << 9)   /**< Cycle Tap selection (CYCTAP) */
+#define DWT_CTRL_SYNCTAP    (0x3U << 10) /**< Sync Tap (bits 11:10) */
+#define DWT_CTRL_PCSAMPLENA (1U << 12)  /**< PC Sample enable (PCSAMPLENA) */
+#define DWT_CTRL_EXCTRIG    (1U << 16)  /**< Exception Trigger enable (EXCTRIG) */
+#define DWT_CTRL_CPIEVTENA  (1U << 17)  /**< CPI Event enable (CPIEVTENA) */
+#define DWT_CTRL_EXCEVTENA  (1U << 18)  /**< Exception Event enable (EXCEVTENA) */
+#define DWT_CTRL_SLEEPEVTENA (1U << 19) /**< Sleep Event enable (SLEEPEVTENA) */
+#define DWT_CTRL_LSUEVTENA  (1U << 20)  /**< LSU Event enable (LSUEVTENA) */
+#define DWT_CTRL_FOLDEVTENA (1U << 21)  /**< Fold Event enable (FOLDEVTENA) */
+#define DWT_CTRL_CYCEVTENA  (1U << 22)  /**< Cycle Event enable (CYCEVTENA) */
+#define DWT_CTRL_NOPRIV     (1U << 24)  /**< Non-privileged access enable (NOPRIV) */
+#define DWT_CTRL_NOTAG      (1U << 26)  /**< Disable Tag extension (NOTAG) */
+#define DWT_CTRL_NUMCOMP_MASK (0xFU << 28) /**< Number of comparators (bits 31:28) */
+
+/** @} */
+/*---------------------------------------------------------------------------*/
+/** \name CoreDebug (Core Debug) Register Structure
+ * @{
+ */
+
+/** \brief CoreDebug register layout (ARM Cortex-M4) */
+typedef struct {
+  uint32_t DHCSR;      /**< Debug Halting Control and Status Register (offset 0x00) */
+  uint32_t DCRSR;      /**< Debug Core Register Selector Register (offset 0x04) */
+  uint32_t DCRDR;      /**< Debug Core Register Data Register (offset 0x08) */
+  uint32_t DEMCR;      /**< Debug Exception and Monitor Control Register (offset 0x0C) */
+} coredebug_registers_t;
+
+/** \brief CoreDebug peripheral pointer at fixed memory address */
+#define COREDEBUG ((coredebug_registers_t *)0xE000EDF0UL)
+
+/** @} */
+/*---------------------------------------------------------------------------*/
+/** \name CoreDebug DEMCR (Debug Exception and Monitor Control) Bit Definitions
+ * @{
+ */
+
+#define COREDEBUG_DEMCR_TRCENA  (1U << 24)  /**< Trace Enable (TRCENA) - required for DWT */
+
+/** @} */
+/*---------------------------------------------------------------------------*/
 
 // Sets up the FPU, vector relocation, and other system functions
 void SystemInit(void);
