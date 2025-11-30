@@ -163,4 +163,105 @@ isr_noise_is_running(void)
 
 /*---------------------------------------------------------------------------*/
 
+/**
+ * \brief Measure a single ISR loop execution time.
+ *
+ * Runs the ISR loop once and measures cycle count via DWT.
+ * This is a helper for the public isr_noise_measure_loop_time().
+ */
+static uint32_t
+isr_noise_measure_loop_cycles(uint32_t iterations)
+{
+  extern uint32_t dwt_get_cycles(void);
+  uint32_t cycles_start, cycles_end, cycles_elapsed;
+  uint32_t i;
+
+  /* Record cycle count before loop */
+  cycles_start = dwt_get_cycles();
+
+  /* Execute the noise loop */
+  for (i = 0; i < iterations; i++) {
+    __asm volatile("nop");
+  }
+
+  /* Record cycle count after loop */
+  cycles_end = dwt_get_cycles();
+
+  /* Calculate elapsed cycles (handle wraparound) */
+  if (cycles_end >= cycles_start) {
+    cycles_elapsed = cycles_end - cycles_start;
+  } else {
+    /* 32-bit counter wrapped around */
+    cycles_elapsed = (0xFFFFFFFFU - cycles_start) + cycles_end;
+  }
+
+  return cycles_elapsed;
+}
+
+/*---------------------------------------------------------------------------*/
+
+uint32_t
+isr_noise_measure_loop_time(uint32_t iterations)
+{
+  extern uint32_t dwt_cycles_to_us(uint32_t cycles);
+  uint32_t cycles;
+
+  /* Measure the loop */
+  cycles = isr_noise_measure_loop_cycles(iterations);
+
+  /* Convert cycles to microseconds */
+  return dwt_cycles_to_us(cycles);
+}
+
+/*---------------------------------------------------------------------------*/
+
+uint32_t
+isr_noise_calibrate_for_load(float target_isr_percent)
+{
+  uint32_t low = 0;
+  uint32_t high = 1000000;  /* Upper bound: ~5.5 ms loop */
+  uint32_t mid;
+  uint32_t loop_time_us;
+  float measured_isr_percent;
+  float error;
+  float best_error = 100.0f;
+  uint32_t best_iterations = 0;
+  int iterations = 0;
+
+  /* Binary search for iteration count that matches target ISR% */
+  while (low <= high && iterations < 30) {
+    mid = (low + high) / 2;
+
+    /* Measure loop time for this iteration count */
+    loop_time_us = isr_noise_measure_loop_time(mid);
+
+    /* Calculate ISR% from measured time */
+    /* ISR% = (loop_time_µs / 1000 µs) * 100 */
+    measured_isr_percent = (loop_time_us / 1000.0f) * 100.0f;
+
+    /* Calculate error from target */
+    error = measured_isr_percent - target_isr_percent;
+    if (error < 0) error = -error;  /* Absolute value */
+
+    /* Track best match */
+    if (error < best_error) {
+      best_error = error;
+      best_iterations = mid;
+    }
+
+    /* Adjust search bounds */
+    if (measured_isr_percent < target_isr_percent) {
+      low = mid + 1;
+    } else {
+      high = mid - 1;
+    }
+
+    iterations++;
+  }
+
+  return best_iterations;
+}
+
+/*---------------------------------------------------------------------------*/
+
 /** @} */
