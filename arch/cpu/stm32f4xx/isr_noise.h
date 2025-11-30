@@ -108,6 +108,35 @@ void isr_noise_stop(void);
  */
 int isr_noise_is_running(void);
 
+/**
+ * \brief Measure ISR loop execution time for a given iteration count.
+ *
+ * \param iterations Number of loop iterations to measure
+ * \return Measured execution time in microseconds (via DWT cycle counter)
+ *
+ * Runs the ISR loop once and measures how long it takes using DWT->CYCCNT.
+ * Useful for calibration: adjust iterations until you get target ISR%.
+ *
+ * \note DWT must be initialized (dwt_init() called before)
+ * \note Requires interrupts to be enabled for TIM3_IRQHandler to fire
+ */
+uint32_t isr_noise_measure_loop_time(uint32_t iterations);
+
+/**
+ * \brief Find iteration count to achieve target ISR load percentage.
+ *
+ * \param target_isr_percent Target ISR load (e.g., 5.0 for 5%)
+ * \return Recommended iteration count to achieve target load
+ *
+ * Uses binary search to find the iteration count that produces
+ * the desired ISR% load. Measurement assumes 1 kHz interrupt rate.
+ * Formula: ISR% = (loop_time_µs / 1000 µs) * 100
+ *
+ * \note DWT must be initialized (dwt_init() called before)
+ * \note Requires interrupts enabled and TIM3 running
+ */
+uint32_t isr_noise_calibrate_for_load(float target_isr_percent);
+
 /*---------------------------------------------------------------------------*/
 
 /** \brief Configuration: TIM3 frequency (1 kHz) */
