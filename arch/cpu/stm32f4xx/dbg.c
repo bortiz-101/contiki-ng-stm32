@@ -33,7 +33,7 @@
  *
  * \file
  * Debug output driver for STM32F4XX using USART2
- * USART2 on PA2 (TX), PA3 (RX)
+ * USART2 on PA2 (TX), PA3 (RX) - connected to ST-LINK virtual COM port
  * Baud rate: 115200 @ 45 MHz APB1 clock
  */
 
