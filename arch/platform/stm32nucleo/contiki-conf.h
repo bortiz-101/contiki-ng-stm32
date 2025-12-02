@@ -2,27 +2,29 @@
 #define CONTIKI_CONF_H
 
 /*---------------------------------------------------------------------------*/
-/* Include Project Specific conf */
+/* Include Project Specific conf (highest priority - user overrides) */
 #ifdef PROJECT_CONF_PATH
 #include PROJECT_CONF_PATH
 #endif /* PROJECT_CONF_PATH */
 /*---------------------------------------------------------------------------*/
+
+/* Include CPU-specific non-modifiable definitions */
 #include "stm32f4xx-def.h"
-/*---------------------------------------------------------------------------*/
-/* Include Board Specific conf */
-#ifdef BOARD_CONF_PATH
-#include BOARD_CONF_PATH
-#else
-#error "BOARD_CONF_PATH undefined"
-#endif
-/*---------------------------------------------------------------------------*/
-/* Include Board Specific def */
+
+/* Include Board-specific non-modifiable definitions */
 #ifdef BOARD_DEF_PATH
 #include BOARD_DEF_PATH
 #else
-#error "BOARD_DEF_PATH undefined"
+#error "BOARD_DEF_PATH not defined - set in platform Makefile"
 #endif
+
 /*---------------------------------------------------------------------------*/
+/* 
+ * ==================== User Configuration Sections ====================
+ * Sections below can be modified by users in project-conf.h
+ */
+/*---------------------------------------------------------------------------*/
+
 /* Network stack configuration */
 
 /* Define the statistics type - required by uip.h */
@@ -76,6 +78,15 @@ typedef unsigned int uip_stats_t;
 #ifndef UIP_CONF_BUFFER_SIZE
 #define UIP_CONF_BUFFER_SIZE 240
 #endif
+
+/*---------------------------------------------------------------------------*/
+/* Include Board-specific configurable definitions (lowest priority) */
+#ifdef BOARD_CONF_PATH
+#include BOARD_CONF_PATH
+#endif
+
+/* Include CPU-specific configurable definitions */
+#include "stm32f4xx-conf.h"
 
 /*---------------------------------------------------------------------------*/
 #endif /* CONTIKI_CONF_H */
