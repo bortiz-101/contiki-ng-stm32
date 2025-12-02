@@ -32,99 +32,127 @@
  * @{
  *
  * \file
- * Debug output driver for STM32F4XX using USART2
- * USART2 on PA2 (TX), PA3 (RX) - connected to ST-LINK virtual COM port
- * Baud rate: 115200 @ 45 MHz APB1 clock
+ * Debug output driver for STM32F4xx using USART2 with STM32 HAL
+ *
+ * Uses USART2 on PA2 (TX) / PA3 (RX) connected to ST-LINK virtual COM port.
+ * HAL is used for all peripheral initialization and character transmission.
+ *
+ * Features:
+ * - USART2 at 115200 baud
+ * - Configured for typical IoT debugging
+ * - Uses HAL_UART for compatibility and maintainability
  */
 
 #include "contiki.h"
-#include "system_stm32f4xx.h"
+#include "dbg.h"
 
 #include <stdint.h>
 
+/* HAL GPIO and UART support */
+#include "stm32f4xx_hal_dma.h"
+#include "stm32f4xx_hal_gpio.h"
+#include "stm32f4xx_hal_uart.h"
+#include "stm32f4xx_hal_rcc.h"
+
+/* ========== Global UART Handle ========== */
+static UART_HandleTypeDef huart2;
+
 /*---------------------------------------------------------------------------*/
 /**
- * \brief Initialize USART2 for debug output
+ * \brief Configure GPIO pins for USART2 (PA2, PA3)
  *
- * Configures USART2 with:
- * - Baud rate: 115200
- * - Data bits: 8
- * - Stop bits: 1
- * - No parity
- * - TX pin: PA2 (AF7)
- * - RX pin: PA3 (AF7)
- * - APB1 clock: 45 MHz
+ * Sets PA2 and PA3 as USART2 TX and RX respectively.
+ */
+static void
+dbg_gpio_init(void)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+  /* Enable GPIOA clock */
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+
+  /* Configure PA2 (USART2 TX) and PA3 (USART2 RX) as AF7 */
+  GPIO_InitStruct.Pin = GPIO_PIN_2 | GPIO_PIN_3;
+  GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;           /* Alternate function, push-pull */
+  GPIO_InitStruct.Pull = GPIO_NOPULL;               /* No pull resistors (STM32 has internal) */
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH; /* High speed for 115200 baud */
+  GPIO_InitStruct.Alternate = GPIO_AF7_USART2;      /* USART2 on AF7 */
+
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+}
+
+/*---------------------------------------------------------------------------*/
+/**
+ * \brief Initialize USART2 for debug output using HAL
+ *
+ * Configures USART2 at 115200 baud, 8N1 (8 data, no parity, 1 stop).
+ * PA2 = TX, PA3 = RX (connected to ST-LINK on Nucleo-F446RE).
+ *
+ * HAL_UART_Init handles all register configuration via the HAL.
+ * This is preferred over raw register access for:
+ * - Vendor support and updates
+ * - Easier debugging
+ * - Compatibility with other HAL functions
  */
 void
 dbg_init(void)
 {
-  uint32_t baud_div;
+  /* Configure GPIO pins for UART */
+  dbg_gpio_init();
 
-  /* Enable GPIOA clock */
-  RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
+  /* Enable USART2 clock */
+  __HAL_RCC_USART2_CLK_ENABLE();
 
-  /* Configure PA2 (USART2 TX) as alternate function 7 */
-  GPIOA->MODER &= ~GPIO_MODER_MASK(2);
-  GPIOA->MODER |= GPIO_MODER_SET(2, GPIO_MODER_ALT_FUNC);
-  GPIOA->AFRL &= ~GPIO_AFR_MASK(2);
-  GPIOA->AFRL |= GPIO_AFR_SET(2, GPIO_AF7_USART2);
+  /* Configure USART2 handle */
+  huart2.Instance = USART2;
+  huart2.Init.BaudRate = 115200;
+  huart2.Init.WordLength = UART_WORDLENGTH_8B;
+  huart2.Init.StopBits = UART_STOPBITS_1;
+  huart2.Init.Parity = UART_PARITY_NONE;
+  huart2.Init.Mode = UART_MODE_TX_RX;
+  huart2.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+  huart2.Init.OverSampling = UART_OVERSAMPLING_16;
 
-  /* Configure PA3 (USART2 RX) as alternate function 7 */
-  GPIOA->MODER &= ~GPIO_MODER_MASK(3);
-  GPIOA->MODER |= GPIO_MODER_SET(3, GPIO_MODER_ALT_FUNC);
-  GPIOA->AFRL &= ~GPIO_AFR_MASK(3);
-  GPIOA->AFRL |= GPIO_AFR_SET(3, GPIO_AF7_USART2);
-
-  /* Enable USART2 clock on APB1 */
-  RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
-
-  /* Set baud rate divisor: APB1 45MHz / (16 * 115200) ≈ 24 */
-  baud_div = 24;
-  USART2->BRR = baud_div;
-
-  /* Configure USART2:
-   * - 8 data bits (default, M=0)
-   * - 1 stop bit (default)
-   * - No parity (default)
-   * - Enable transmitter and receiver
-   */
-  USART2->CR1 = USART_CR1_TE | USART_CR1_RE;
-
-  /* Enable USART2 */
-  USART2->CR1 |= USART_CR1_UE;
+  /* Initialize USART2 with HAL */
+  if (HAL_UART_Init(&huart2) != HAL_OK) {
+    /* Initialization failed - halt here */
+    while (1) {
+      ;
+    }
+  }
 }
 
 /*---------------------------------------------------------------------------*/
 /**
  * \brief Send a single character via USART2
  *
- * Blocks until the transmit buffer is ready.
+ * Uses HAL_UART_Transmit to send one byte.
+ * Blocks until transmission is complete (with 100ms timeout).
+ *
+ * @param c Character to send
  */
 void
 dbg_putchar(unsigned char c)
 {
-  /* Wait for transmit data register to be empty */
-  while(!(USART2->SR & USART_SR_TXE)) {
-    ;
-  }
-
-  /* Send the character */
-  USART2->DR = c;
+  /* HAL_UART_Transmit blocks until transmission is done */
+  HAL_UART_Transmit(&huart2, (uint8_t *)&c, 1, 100);
 }
 
 /*---------------------------------------------------------------------------*/
 /**
  * \brief Send multiple bytes via USART2
  *
- * Sends a buffer of bytes one by one.
+ * Uses HAL_UART_Transmit for efficiency (single transmission vs. per-byte).
+ *
+ * @param buf Buffer containing bytes to send
+ * @param len Number of bytes to send
  */
 void
 dbg_send_bytes(const unsigned char *buf, unsigned int len)
 {
-  unsigned int i;
-
-  for(i = 0; i < len; i++) {
-    dbg_putchar(buf[i]);
+  /* Transmit entire buffer at once for efficiency */
+  if (len > 0) {
+    HAL_UART_Transmit(&huart2, (uint8_t *)buf, len, 1000);
   }
 }
 
