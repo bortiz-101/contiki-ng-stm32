@@ -48,6 +48,9 @@
 
 #include <stdint.h>
 
+/* STM32 device definitions */
+#include "stm32f446xx.h"
+
 /* HAL GPIO and UART support */
 #include "stm32f4xx_hal_dma.h"
 #include "stm32f4xx_hal_gpio.h"
