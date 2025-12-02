@@ -47,6 +47,9 @@
 #include <inttypes.h>
 #include <stdint.h>
 
+/* STM32 device definitions */
+#include "stm32f446xx.h"
+
 /* STM32 HAL includes */
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_hal_rcc.h"
@@ -56,6 +59,7 @@
 #include "stm32f4xx_hal_pwr.h"
 #include "stm32f4xx_hal_pwr_ex.h"
 #include "stm32f4xx_hal_flash.h"
+#include "stm32f4xx_hal_flash_ex.h"
 
 /* Log configuration */
 #include "sys/log.h"
@@ -121,7 +125,8 @@ stm32f4_clock_init(void)
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
   RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
-  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_5) != HAL_OK) {
+  /* 5 wait states for 180 MHz operation (FLASH_LATENCY_5 from stm32f4xx_hal_flash_ex.h) */
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, 5) != HAL_OK) {
     LOG_ERR("Clock configuration failed\n");
     while (1) {
       ;
