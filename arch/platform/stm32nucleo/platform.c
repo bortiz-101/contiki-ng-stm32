@@ -37,6 +37,7 @@
 #include "contiki.h"
 #include "soc.h"
 #include "dwt.h"
+#include "timing_log.h"
 
 /* Log configuration */
 #include "sys/log.h"
@@ -66,6 +67,13 @@ platform_init_stage_one(void)
 
   /* Initialize DWT cycle counter for high-precision timing measurements */
   dwt_init();
+
+  /* Initialize timing log for task event capture */
+  timing_log_init();
+
+  /* Log markers to prove platform initialization runs */
+  timing_log_timestamp(TIMING_LOG_EVENT_START, 99);
+  timing_log_timestamp(TIMING_LOG_EVENT_END, 99);
 
   /* TODO: Platform-specific LED initialization will go here */
   /* leds_init(); */
