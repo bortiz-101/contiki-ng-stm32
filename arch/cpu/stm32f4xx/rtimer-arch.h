@@ -34,17 +34,10 @@
 #define RTIMER_CONF_CLOCK_SIZE 4
 
 /**
- * \brief Real-time timer tick frequency
- * 
- * This should match the actual hardware timer frequency used for rtimer.
- * Uses the same frequency as the main Contiki-NG clock.
- */
-#define RTIMER_ARCH_SECOND CLOCK_SECOND
-
-/**
  * \brief Get the current rtimer clock value
  * 
  * Defined in rtimer-arch.c - reads the free-running TIM2 counter
+ * RTIMER_ARCH_SECOND is defined in stm32f4xx-def.h (1000000 Hz for microsecond resolution)
  */
 rtimer_clock_t rtimer_arch_now(void);
 
