@@ -8,7 +8,9 @@
 #include "contiki.h"
 #include "sys/clock.h"
 #include "sys/etimer.h"
-#include "system_stm32f4xx.h"
+
+/* CMSIS headers for SysTick access */
+#include "stm32f446xx.h"
 
 #include <stdint.h>
 
@@ -27,7 +29,7 @@ void
 clock_init(void)
 {
   /* Disable SysTick first */
-  SYSTICK->CTRL = 0;
+  SysTick->CTRL = 0;
   
   /* 
    * Calculate reload value for desired tick rate
@@ -36,25 +38,26 @@ clock_init(void)
    * Example for STM32F446RE (180 MHz) with CLOCK_CONF_SECOND = 128:
    * Reload = (180,000,000 Hz / 128) - 1 = 1,406,249
    * 
-   * NOTE: SystemCoreClock is set by SystemInit() in system_stm32f4xx.c
+   * NOTE: SystemCoreClock is set by HAL_Init() during SoC initialization
    * If dynamic frequency scaling is implemented in the future,
    * SystemCoreClockUpdate() must be called to recalculate this value.
    */
   
   /* Set reload value (24-bit) */
-  /* Use SystemCoreClock from system_stm32f4xx.c (set by SystemInit()) */
-  SYSTICK->LOAD = (SystemCoreClock / CLOCK_SECOND) - 1;
+  /* Use SystemCoreClock from HAL (set by HAL_Init()) */
+  SysTick->LOAD = (SystemCoreClock / CLOCK_SECOND) - 1;
   
   /* Clear current value */
-  SYSTICK->VAL = 0;
+  SysTick->VAL = 0;
   
   /* 
    * Configure SysTick:
    * - Use processor clock (CLKSOURCE = 1)
    * - Enable interrupt on tick (TICKINT = 1)
    * - Enable counter (ENABLE = 1)
+   * CTRL = 0x07: bits [2:0] = {CLKSOURCE, TICKINT, ENABLE}
    */
-  SYSTICK->CTRL = SYSTICK_CTRL_INIT_VALUE;
+  SysTick->CTRL = 0x07;
 }
 
 /*---------------------------------------------------------------------------*/
