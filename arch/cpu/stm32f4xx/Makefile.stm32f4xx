@@ -3,19 +3,61 @@ CONTIKI_CPU_DIRS += .
 
 ### CPU-dependent source files
 CONTIKI_CPU_SOURCEFILES += soc.c
-CONTIKI_CPU_SOURCEFILES += system_stm32f4xx.c
 CONTIKI_CPU_SOURCEFILES += clock.c
 CONTIKI_CPU_SOURCEFILES += rtimer-arch.c
-CONTIKI_CPU_SOURCEFILES += watchdog.c
 CONTIKI_CPU_SOURCEFILES += dbg.c
 CONTIKI_CPU_SOURCEFILES += dwt.c
+CONTIKI_CPU_SOURCEFILES += system-stm32f4xx.c
+CONTIKI_CPU_SOURCEFILES += watchdog.c
 CONTIKI_CPU_SOURCEFILES += timing_log.c
-CONTIKI_CPU_SOURCEFILES += isr_noise.c
+
+### Newlib integration (system memory and syscalls)
+CONTIKI_CPU_SOURCEFILES += syscalls.c
+CONTIKI_CPU_SOURCEFILES += sysmem.c
+
+### HAL middleware and interrupt handlers
+CONTIKI_CPU_SOURCEFILES += hal-msp.c
+CONTIKI_CPU_SOURCEFILES += stm32f4xx_it.c
+
+### STM32 HAL core driver files - only essential ones to avoid dependency hell
+### Include core HAL and the peripheral drivers we actually need
+HAL_DRIVER_DIR ?= $(CONTIKI_CPU)/hal/src
+CONTIKI_CPU_SOURCEFILES += stm32f4xx_hal.c
+CONTIKI_CPU_SOURCEFILES += stm32f4xx_hal_rcc.c
+CONTIKI_CPU_SOURCEFILES += stm32f4xx_hal_rcc_ex.c
+CONTIKI_CPU_SOURCEFILES += stm32f4xx_hal_flash.c
+CONTIKI_CPU_SOURCEFILES += stm32f4xx_hal_flash_ex.c
+CONTIKI_CPU_SOURCEFILES += stm32f4xx_hal_flash_ramfunc.c
+CONTIKI_CPU_SOURCEFILES += stm32f4xx_hal_gpio.c
+CONTIKI_CPU_SOURCEFILES += stm32f4xx_hal_dma.c
+CONTIKI_CPU_SOURCEFILES += stm32f4xx_hal_dma_ex.c
+CONTIKI_CPU_SOURCEFILES += stm32f4xx_hal_pwr.c
+CONTIKI_CPU_SOURCEFILES += stm32f4xx_hal_pwr_ex.c
+CONTIKI_CPU_SOURCEFILES += stm32f4xx_hal_cortex.c
+CONTIKI_CPU_SOURCEFILES += stm32f4xx_hal_uart.c
+CONTIKI_CPU_SOURCEFILES += stm32f4xx_hal_exti.c
+VPATH += $(HAL_DRIVER_DIR)
 
 CONTIKI_SOURCEFILES += $(CONTIKI_CPU_SOURCEFILES)
 
 ### CPU-specific include paths (using already-expanded CONTIKI_CPU from platform Makefile)
 CFLAGS += -I$(CONTIKI_CPU)
+
+### HAL include paths (if HAL headers exist)
+HAL_INC_DIR ?= $(CONTIKI_CPU)/hal/inc
+ifneq ($(wildcard $(HAL_INC_DIR)),)
+CFLAGS += -I$(HAL_INC_DIR)
+endif
+
+### CMSIS include paths (if CMSIS headers exist)
+CMSIS_CORE_DIR ?= $(CONTIKI_CPU)/cmsis/core
+CMSIS_DEVICE_DIR ?= $(CONTIKI_CPU)/cmsis/device
+ifneq ($(wildcard $(CMSIS_CORE_DIR)),)
+CFLAGS += -I$(CMSIS_CORE_DIR)
+endif
+ifneq ($(wildcard $(CMSIS_DEVICE_DIR)),)
+CFLAGS += -I$(CMSIS_DEVICE_DIR)
+endif
 
 ### Include the device-specific Makefile (e.g., Makefile.f446re)
 include $(CONTIKI_CPU)/Makefile.$(CPU_MODEL)
