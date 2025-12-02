@@ -44,6 +44,9 @@
  */
 
 #include "system_stm32f4xx.h"
+#include "stm32f446xx.h"
+
+#include <stdint.h>
 
 /*---------------------------------------------------------------------------*/
 
@@ -59,13 +62,13 @@ void
 dwt_init(void)
 {
   /* Enable debug features via CoreDebug (required for DWT access) */
-  COREDEBUG->DEMCR |= COREDEBUG_DEMCR_TRCENA;
+  CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
 
   /* Reset the cycle counter to 0 */
   DWT->CYCCNT = 0;
 
   /* Enable the cycle counter */
-  DWT->CTRL |= DWT_CTRL_CYCCNTENA;
+  DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
 }
 
 /*---------------------------------------------------------------------------*/
